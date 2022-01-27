@@ -35,10 +35,12 @@ module Anon
     end
 
     # @param [Symbol] name
-    # @param [Proc] block
+    # @param [Hash] opts
+    # @param [#call] :using
+    # @param [Proc] processor
     # @return [Anon::Schema]
-    def attribute(name, &block)
-      @attributes << Attribute.new(name, &block)
+    def attribute(...)
+      @attributes << Attribute.new(...)
 
       self
     end
