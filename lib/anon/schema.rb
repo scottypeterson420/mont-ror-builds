@@ -1,7 +1,7 @@
 module Anon
   class Schema
     DEFAULT_SCOPE = proc { |scope| scope }
-    WITHOUT_ANONYMIZED = proc { |scope| scope.where.not(Anon.config.anonymization_attribute => nil) }
+    WITHOUT_ANONYMIZED = proc { |scope| scope.where(Anon.config.anonymization_attribute => nil) }
 
     # @param [ActiveRecord::Base] ar_class
     # @param [Hash] opts
