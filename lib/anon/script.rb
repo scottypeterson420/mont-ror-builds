@@ -25,5 +25,6 @@ module Anon
     private
 
     attr_reader :schemas
+    attr_reader :path
   end
 end

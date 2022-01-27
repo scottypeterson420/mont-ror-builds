@@ -24,7 +24,9 @@ module Anon
 
     private
 
-    attr_reader :attributes, :before, :after
+    attr_reader :attributes
+    attr_reader :before
+    attr_reader :after
 
     def anonymized_attributes(record)
       attributes

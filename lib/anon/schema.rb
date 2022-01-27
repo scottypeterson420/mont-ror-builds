@@ -66,7 +66,12 @@ module Anon
 
     private
 
-    attr_reader :model, :without_anonymized_scope, :model_scope, :attributes, :before_cb, :after_cb
+    attr_reader :model
+    attr_reader :without_anonymized_scope
+    attr_reader :model_scope
+    attr_reader :attributes
+    attr_reader :before_cb
+    attr_reader :after_cb
 
     def processor
       @processor ||= RecordProcessor.new(attributes, before_cb, after_cb)
