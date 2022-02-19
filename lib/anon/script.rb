@@ -18,8 +18,8 @@ module Anon
     # @option [Proc] :scope
     # @param [Proc] block
     # @return [Anon::Schema]
-    def schema(...)
-      @schemas << Schema.new(...)
+    def schema(*_arts)
+      @schemas << Schema.new(*args)
     end
 
     private

@@ -1,4 +1,5 @@
 require 'bundler/setup'
+require 'timecop'
 require 'anon'
 
 RSpec.configure do |config|
@@ -11,4 +12,6 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  Dir["#{__dir__}/support/**/*.rb"].sort.each { |f| require f }
 end

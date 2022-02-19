@@ -3,7 +3,6 @@ module Anon
     DEFAULT_SCOPE = proc { |scope| scope }
     WITHOUT_ANONYMIZED = proc { |scope| scope.where(Anon.config.anonymization_attribute => nil) }
 
-    # @param [ActiveRecord::Base] ar_class
     # @param [Hash] opts
     # @option [Class] :model
     # @option [Proc] :scope
@@ -26,7 +25,7 @@ module Anon
       self
     end
 
-    # @param [Proc] :scope
+    # @param [Proc] scope
     # @return [Anon::Schema]
     def scope(&scope)
       @model_scope = scope
@@ -36,7 +35,7 @@ module Anon
 
     # @param [Symbol] name
     # @param [Hash] opts
-    # @param [#call] :using
+    # @option [#call] :using
     # @param [Proc] processor
     # @return [Anon::Schema]
     def attribute(...)

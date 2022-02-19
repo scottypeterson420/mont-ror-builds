@@ -1,4 +1,5 @@
 desc 'Run schema anonymization'
 task anon: :environment do
-  Anon::Script.new(Anon.config.script_path).run!
+  path = Rails.root.join(Anon.config.script_path)
+  Anon::Script.new(path).run!
 end

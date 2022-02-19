@@ -5,7 +5,7 @@ module Anon
 
     # @param [Symbol] name
     # @param [Hash] opts
-    # @param [#call] :using
+    # @option [#call] :using
     # @param [Proc] processor
     def initialize(name, opts = {}, &processor)
       @name = name

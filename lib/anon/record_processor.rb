@@ -12,9 +12,10 @@ module Anon
     end
 
     # @param [ActiveRecord::Base] record
+    # @return [ActiveRecord::Base] record
     def anonymize!(record)
       before.call(record)
-      record.update_columns(
+      record.update_columns( # rubocop:disable Rails/SkipsModelValidations
         anonymized_attributes(record)
       )
       after.call(record)
@@ -38,7 +39,7 @@ module Anon
 
     def default_anonymization_attributes
       {
-        Anon.config.anonymization_attribute => Time.zone.now
+        Anon.config.anonymization_attribute => Time.now.getlocal
       }
     end
   end
