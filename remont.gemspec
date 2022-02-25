@@ -1,8 +1,8 @@
-require_relative 'lib/anon/version'
+require_relative 'lib/remont/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'anon'
-  spec.version       = Anon::VERSION
+  spec.name          = 'remont'
+  spec.version       = Remont::VERSION
   spec.authors       = ['Vedran Hrncic']
   spec.email         = ['vedran.hrncic@infinum.hr']
 

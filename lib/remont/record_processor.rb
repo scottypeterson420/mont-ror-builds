@@ -1,8 +1,8 @@
-module Anon
+module Remont
   class RecordProcessor
     NOOP = proc {}
 
-    # @param [Array<Anon::Attribute>] attributes
+    # @param [Array<Remont::Attribute>] attributes
     # @param [Proc] before
     # @param [Proc] after
     def initialize(attributes, before, after)
@@ -39,7 +39,7 @@ module Anon
 
     def default_anonymization_attributes
       {
-        Anon.config.anonymization_attribute => Time.now.getlocal
+        Remont.config.anonymization_attribute => Time.now.getlocal
       }
     end
   end

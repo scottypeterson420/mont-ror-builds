@@ -1,4 +1,4 @@
-RSpec.describe Anon::Schema do
+RSpec.describe Remont::Schema do
   it 'processes each matching record' do # rubocop:disable RSpec/ExampleLength
     bob = User.create(email: 'bob@example.com', role: 'admin', anonymized_at: nil)
     schema = described_class.new(model: User) do

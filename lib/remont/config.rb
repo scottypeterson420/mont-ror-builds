@@ -1,4 +1,4 @@
-module Anon
+module Remont
   class Config
     DEFAULT_SCRIPT_PATH = 'db/anon.rb'.freeze
 

@@ -1,6 +1,6 @@
 require 'bundler/setup'
 require 'timecop'
-require 'anon'
+require 'remont'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

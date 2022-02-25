@@ -1,4 +1,4 @@
-module Anon
+module Remont
   class Railtie < Rails::Railtie
     rake_tasks do
       path = File.expand_path(__dir__)

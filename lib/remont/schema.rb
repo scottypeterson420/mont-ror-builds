@@ -1,7 +1,7 @@
-module Anon
+module Remont
   class Schema
     DEFAULT_SCOPE = proc { |scope| scope }
-    WITHOUT_ANONYMIZED = proc { |scope| scope.where(Anon.config.anonymization_attribute => nil) }
+    WITHOUT_ANONYMIZED = proc { |scope| scope.where(Remont.config.anonymization_attribute => nil) }
 
     # @param [Hash] opts
     # @option [Class] :model
@@ -18,7 +18,7 @@ module Anon
       instance_eval(&block)
     end
 
-    # @return [Anon::Schema]
+    # @return [Remont::Schema]
     def without_anonymized
       @without_anonymized_scope = WITHOUT_ANONYMIZED
 
@@ -26,7 +26,7 @@ module Anon
     end
 
     # @param [Proc] scope
-    # @return [Anon::Schema]
+    # @return [Remont::Schema]
     def scope(&scope)
       @model_scope = scope
 
@@ -37,7 +37,7 @@ module Anon
     # @param [Hash] opts
     # @option [#call] :using
     # @param [Proc] processor
-    # @return [Anon::Schema]
+    # @return [Remont::Schema]
     def attribute(...)
       @attributes << Attribute.new(...)
 
@@ -45,7 +45,7 @@ module Anon
     end
 
     # @param [Proc] block
-    # @return [Anon::Schema]
+    # @return [Remont::Schema]
     def before(&block)
       @before_cb = block
 
@@ -53,7 +53,7 @@ module Anon
     end
 
     # @param [Proc] block
-    # @return [Anon::Schema]
+    # @return [Remont::Schema]
     def after(&block)
       @after_cb = block
 

@@ -1,4 +1,4 @@
-module Anon
+module Remont
   class Attribute
     # @return [Symbol]
     attr_reader :name

@@ -1,4 +1,4 @@
-module Anon
+module Remont
   class Script
     # @path [String] path
     def initialize(path)
@@ -17,8 +17,8 @@ module Anon
     # @option [Proc] :model
     # @option [Proc] :scope
     # @param [Proc] block
-    # @return [Anon::Schema]
-    def schema(*_arts)
+    # @return [Remont::Schema]
+    def schema(*args)
       @schemas << Schema.new(*args)
     end
 

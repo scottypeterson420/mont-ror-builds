@@ -1,4 +1,4 @@
-RSpec.describe Anon::Config do
+RSpec.describe Remont::Config do
   context 'without custom options' do
     let(:config) { described_class.new }
 
@@ -7,7 +7,7 @@ RSpec.describe Anon::Config do
     end
 
     it 'initializes default script path' do
-      expect(config.script_path).to eq(Anon::Config::DEFAULT_SCRIPT_PATH)
+      expect(config.script_path).to eq(Remont::Config::DEFAULT_SCRIPT_PATH)
     end
   end
 end

@@ -1,8 +1,8 @@
-RSpec.describe Anon::RecordProcessor do
+RSpec.describe Remont::RecordProcessor do
   subject(:processor) do
     described_class.new(
-      [Anon::Attribute.new(:email) { 'email' },
-       Anon::Attribute.new(:role) { 'role' }],
+      [Remont::Attribute.new(:email) { 'email' },
+       Remont::Attribute.new(:role) { 'role' }],
       callback,
       callback
     )
