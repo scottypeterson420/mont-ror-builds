@@ -1,7 +1,7 @@
 module Remont
   class Schema
     DEFAULT_SCOPE = proc { |scope| scope }
-    WITHOUT_ANONYMIZED = proc { |scope| scope.where(Remont.config.anonymization_attribute => nil) }
+    WITHOUT_PROCESSED = proc { |scope| scope.where(Remont.config.process_timestamp_attribute => nil) }
 
     # @param [Hash] opts
     # @option [Class] :model
@@ -10,7 +10,7 @@ module Remont
     def initialize(opts = {}, &block)
       @model = opts.fetch(:model)
       @model_scope = opts.fetch(:scope, DEFAULT_SCOPE)
-      @without_anonymized_scope = DEFAULT_SCOPE
+      @without_processed_scope = DEFAULT_SCOPE
       @before_cb = nil
       @after_cb = nil
       @attributes = []
@@ -19,8 +19,8 @@ module Remont
     end
 
     # @return [Remont::Schema]
-    def without_anonymized
-      @without_anonymized_scope = WITHOUT_ANONYMIZED
+    def without_processed
+      @without_processed_scope = WITHOUT_PROCESSED
 
       self
     end
@@ -61,14 +61,14 @@ module Remont
     end
 
     # @return [Any]
-    def anonymize!
-      records_for_anonymization.find_each { |record| processor.anonymize!(record) }
+    def process!
+      records_for_processing.find_each { |record| processor.process!(record) }
     end
 
     private
 
     attr_reader :model
-    attr_reader :without_anonymized_scope
+    attr_reader :without_processed_scope
     attr_reader :model_scope
     attr_reader :attributes
     attr_reader :before_cb
@@ -78,14 +78,10 @@ module Remont
       @processor ||= RecordProcessor.new(attributes, before_cb, after_cb)
     end
 
-    def records_for_anonymization
+    def records_for_processing
       model_scope.call(
-        without_anonymized_scope.call(model.all)
+        without_processed_scope.call(model.all)
       )
-    end
-
-    def anonymize_record!(record)
-      processor.anonymize!(record)
     end
   end
 end

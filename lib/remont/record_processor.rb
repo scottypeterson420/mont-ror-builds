@@ -13,10 +13,10 @@ module Remont
 
     # @param [ActiveRecord::Base] record
     # @return [ActiveRecord::Base] record
-    def anonymize!(record)
+    def process!(record)
       before.call(record)
       record.update_columns( # rubocop:disable Rails/SkipsModelValidations
-        anonymized_attributes(record)
+        processed_attributes(record)
       )
       after.call(record)
 
@@ -29,17 +29,19 @@ module Remont
     attr_reader :before
     attr_reader :after
 
-    def anonymized_attributes(record)
+    def processed_attributes(record)
       attributes
         .select { |attribute| record.send(attribute.name).present? }
-        .reduce(default_anonymization_attributes) do |memo, attribute|
-          memo.merge(attribute.name => attribute.anonymize(record.send(attribute.name), record))
+        .reduce(default_processed_attributes) do |memo, attribute|
+          memo.merge(attribute.name => attribute.process(record.send(attribute.name), record))
         end
     end
 
-    def default_anonymization_attributes
+    def default_processed_attributes
+      return {} unless Remont.config.process_timestamp_attribute
+
       {
-        Remont.config.anonymization_attribute => Time.now.getlocal
+        Remont.config.process_timestamp_attribute => Time.now.getlocal
       }
     end
   end

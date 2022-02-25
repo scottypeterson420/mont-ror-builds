@@ -15,7 +15,7 @@ module Remont
     # @param [Object] value
     # @param [ActiveRecord::Base] record
     # @return [Object]
-    def anonymize(value, record)
+    def process(value, record)
       processor.call(value, record)
     end
 

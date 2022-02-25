@@ -1,16 +1,16 @@
 RSpec.describe Remont::Schema do
   it 'processes each matching record' do # rubocop:disable RSpec/ExampleLength
-    bob = User.create(email: 'bob@example.com', role: 'admin', anonymized_at: nil)
+    bob = User.create(email: 'bob@example.com', role: 'admin', processed_at: nil)
     schema = described_class.new(model: User) do
       attribute(:email) { 'email' }
     end
 
     Timecop.freeze do
       expect do
-        schema.anonymize!
+        schema.process!
         bob.reload
       end.to change(bob, :email).to('email')
-                                .and change(bob, :anonymized_at).to(Time.now.getlocal)
+                                .and change(bob, :processed_at).to(Time.now.getlocal)
     end
   end
 
@@ -22,13 +22,13 @@ RSpec.describe Remont::Schema do
     end
 
     it 'processes all records' do
-      bob = User.create(email: 'bob@example.com', role: 'customer', anonymized_at: nil)
-      alice = User.create(email: 'alice@example.com', role: 'admin', anonymized_at: nil)
+      bob = User.create(email: 'bob@example.com', role: 'customer', processed_at: nil)
+      alice = User.create(email: 'alice@example.com', role: 'admin', processed_at: nil)
 
-      schema.anonymize!
+      schema.process!
 
-      expect(bob.reload.anonymized_at).not_to be_nil
-      expect(alice.reload.anonymized_at).not_to be_nil
+      expect(bob.reload.processed_at).not_to be_nil
+      expect(alice.reload.processed_at).not_to be_nil
     end
   end
 
@@ -43,33 +43,33 @@ RSpec.describe Remont::Schema do
     end
 
     it 'processes only matching records' do
-      bob = User.create(email: 'bob@example.com', role: 'customer', anonymized_at: nil)
-      alice = User.create(email: 'alice@example.com', role: 'admin', anonymized_at: nil)
+      bob = User.create(email: 'bob@example.com', role: 'customer', processed_at: nil)
+      alice = User.create(email: 'alice@example.com', role: 'admin', processed_at: nil)
 
-      schema.anonymize!
+      schema.process!
 
-      expect(bob.reload.anonymized_at).not_to be_nil
-      expect(alice.reload.anonymized_at).to be_nil
+      expect(bob.reload.processed_at).not_to be_nil
+      expect(alice.reload.processed_at).to be_nil
     end
   end
 
-  context 'when skip anonymized scope is enabled' do
+  context 'when skip process scope is enabled' do
     let(:schema) do
       described_class.new(model: User) do
-        without_anonymized
+        without_processed
         attribute(:email) { 'email' }
       end
     end
 
-    it 'processes only non-anonymized records' do
-      anonymized_at = Time.now.getlocal
-      bob = User.create(email: 'bob@example.com', role: 'admin', anonymized_at: anonymized_at)
-      alice = User.create(email: 'alice@example.com', role: 'admin', anonymized_at: nil)
+    it 'processes only non-processed records' do
+      processed_at = Time.now.getlocal
+      bob = User.create(email: 'bob@example.com', role: 'admin', processed_at: processed_at)
+      alice = User.create(email: 'alice@example.com', role: 'admin', processed_at: nil)
 
-      schema.anonymize!
+      schema.process!
 
-      expect(bob.reload.anonymized_at).to eq(anonymized_at)
-      expect(alice.reload.anonymized_at).not_to be_nil
+      expect(bob.reload.processed_at).to eq(processed_at)
+      expect(alice.reload.processed_at).not_to be_nil
     end
   end
 
@@ -80,7 +80,7 @@ RSpec.describe Remont::Schema do
       cb = callback
 
       described_class.new(model: User) do
-        without_anonymized
+        without_processed
         attribute(:email) { 'email' }
         before { |*args| cb.call(*args) }
       end
@@ -90,7 +90,7 @@ RSpec.describe Remont::Schema do
       bob = User.create(email: 'bob@example.com')
       alice = User.create(email: 'alice@example.com')
 
-      schema.anonymize!
+      schema.process!
 
       expect(callback).to have_received(:call).with(bob)
       expect(callback).to have_received(:call).with(alice)
@@ -104,7 +104,7 @@ RSpec.describe Remont::Schema do
       cb = callback
 
       described_class.new(model: User) do
-        without_anonymized
+        without_processed
         attribute(:email) { 'email' }
         after { |*args| cb.call(*args) }
       end
@@ -114,7 +114,7 @@ RSpec.describe Remont::Schema do
       bob = User.create(email: 'bob@example.com')
       alice = User.create(email: 'alice@example.com')
 
-      schema.anonymize!
+      schema.process!
 
       expect(callback).to have_received(:call).with(bob)
       expect(callback).to have_received(:call).with(alice)

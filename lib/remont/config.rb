@@ -1,15 +1,15 @@
 module Remont
   class Config
-    DEFAULT_SCRIPT_PATH = 'db/anon.rb'.freeze
+    DEFAULT_SCRIPT_PATH = 'db/remont.rb'.freeze
 
     # @return [Symbol]
-    attr_accessor :anonymization_attribute
+    attr_accessor :process_timestamp_attribute
 
     # @return [String]
     attr_accessor :script_path
 
     def initialize
-      @anonymization_attribute = :anonymized_at
+      @process_timestamp_attribute = :processed_at
       @script_path = DEFAULT_SCRIPT_PATH
     end
   end

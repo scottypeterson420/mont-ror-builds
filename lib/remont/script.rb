@@ -10,7 +10,7 @@ module Remont
     def run!
       instance_eval(File.read(path))
 
-      schemas.each(&:anonymize!)
+      schemas.each(&:process!)
     end
 
     # @param [Hash] opts

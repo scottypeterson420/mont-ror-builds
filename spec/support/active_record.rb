@@ -10,7 +10,7 @@ ActiveRecord::Schema.define do
   create_table 'users' do |t|
     t.string :email
     t.string :role
-    t.datetime :anonymized_at
+    t.datetime :processed_at
   end
 end
 
@@ -23,7 +23,7 @@ class User < ActiveRecord::Base # rubocop:disable Rails/ApplicationRecord
     super
   end
 
-  def anonymized_at # rubocop:disable Lint/UselessMethodDefinition
+  def processed_at # rubocop:disable Lint/UselessMethodDefinition
     super
   end
 end
