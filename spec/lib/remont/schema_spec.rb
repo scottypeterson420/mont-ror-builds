@@ -5,13 +5,14 @@ RSpec.describe Remont::Schema do
       attribute(:email) { 'email' }
     end
 
-    Timecop.freeze do
-      expect do
-        schema.process!
-        bob.reload
-      end.to change(bob, :email).to('email')
-                                .and change(bob, :processed_at).to(Time.now.getlocal)
+    now = Time.now.getlocal
+    Timecop.freeze(now) do
+      schema.process!
     end
+
+    bob.reload
+    expect(bob.email).to eq('email')
+    expect(bob.processed_at).to be_within(1).of(now)
   end
 
   context 'without scope applied' do
@@ -62,13 +63,14 @@ RSpec.describe Remont::Schema do
     end
 
     it 'processes only non-processed records' do
-      processed_at = Time.now.getlocal
-      bob = User.create(email: 'bob@example.com', role: 'admin', processed_at: processed_at)
+      last_processing_at = Time.now.getlocal - 60
+      bob = User.create(email: 'bob@example.com', role: 'admin', processed_at: last_processing_at)
       alice = User.create(email: 'alice@example.com', role: 'admin', processed_at: nil)
 
       schema.process!
 
-      expect(bob.reload.processed_at).to eq(processed_at)
+      bob.reload
+      expect(bob.reload.processed_at).to be_within(1).of(last_processing_at)
       expect(alice.reload.processed_at).not_to be_nil
     end
   end

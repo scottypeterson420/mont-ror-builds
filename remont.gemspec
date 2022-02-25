@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'remont'
   spec.version       = Remont::VERSION
   spec.authors       = ['Rails Team']
-  spec.email         = ['team.backend@infinum.com']
+  spec.email         = ['team.rails@infinum.com']
 
   spec.summary       = 'DSL for row level data processing.'
   spec.homepage      = 'https://github.com/infinum/remont'
