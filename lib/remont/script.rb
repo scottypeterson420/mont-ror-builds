@@ -18,8 +18,8 @@ module Remont
     # @option [Proc] :scope
     # @param [Proc] block
     # @return [Remont::Schema]
-    def schema(*args)
-      @schemas << Schema.new(*args)
+    def schema(...)
+      @schemas << Schema.new(...)
     end
 
     private

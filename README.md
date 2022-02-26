@@ -1,11 +1,9 @@
 # Remont
 
-A DSL for describing and running the row level processing of the records in the databse (eg. anonymization)
+A DSL for describing and running the row-level processing of the records in the database (eg. anonymization)
 
 ## Installation
-
 Add this line to your application's Gemfile:
-
 ```ruby
 gem 'remont'
 ```
@@ -20,7 +18,6 @@ Or install it yourself as:
 
 ## Application configuration
 Add `config/initializers/remont.rb`
-
 ```ruby
 Remont.setup do |config|
   config.process_timestamp_attribute = :processed_at
@@ -28,10 +25,94 @@ Remont.setup do |config|
 end
 ```
 
-| Option                       | Default value    | Description                                |
-| ---                          | :---:            | ---                                        |
-| `process_timestap_attribute` | `:processed_at`  | process status attribute                   |
-| `script_path`                | `'db/remont.rb'` | entry point for the schema processing task |
+| Option                        | Default value    | Description                                |
+| ---                           | :---:            | ---                                        |
+| `process_timestamp_attribute` | `:processed_at`  | processing status attribute identifier     |
+| `script_path`                 | `'db/remont.rb'` | entry point for the schema processing task |
+
+On successful record processing, `process_timestamp_attribute` on the record will be set to the current processing time (`Time.now.getlocal`).
+
+## Usage
+In the following example, the intention is to simulate anonymization of the `users` and `orders` table.
+- configure the global options
+```ruby
+# config/initializers/remont.rb
+Remont.setup do |config|
+  config.process_timestamp_attribute = :anonyzmied_at
+  config.script_path = 'db/anonymize.rb'
+end
+```
+- define processing script
+```ruby
+# db/anonymize.rb
+schema model: User  do
+  attribute(:email) { 'user@example.com' }
+end
+
+schema model: Order do
+  attribute(:billing_address) { '23 Wall Street, NY' }
+end
+```
+- and run `bundle exec rake remont`
+
+Running the rake task would result in updating `email` (and `anonymized_at`) column for each row in the `users` table, and `billing_address` column for each row in the `orders` table.
+
+### Schema
+Defines database table hosting the rows to be processed. The initial dataset is defined through the `model` option in the `schema` method. `model` value must be a subclass of the `ActiveRecord::Base`.
+```ruby
+schema model: Order do
+end
+```
+### Controlling the scope
+Scope of the data that will be processed is controlled
+- with `scope` option in the `schema` method
+- by declaring custom `scope` within the `schema` block
+```ruby
+# skip admin records
+schema model: User, scope: { |scope| scope.where.not(role: :admin) } do
+end
+
+schema model: Order do
+  # process only active records
+  scope { |scope| scope.where(status: :active) }
+end
+```
+### Skipping the processed records
+In some cases, it's desirable to skip already processed records. You can opt-in to this behavior by declaring `without_processed` within the `schema` block. When declared, the processing dataset query will be extended with a condition that excludes already processed records (ie. `where(Remont.process_timestamp_attribute => nil)`)
+```ruby
+schema model: User do
+  without_processed
+  # ...
+end
+```
+### Callbacks
+Custom pre-processing or post-processing behavior can be declared using `before` and `after` callbacks.
+```ruby
+schema model: User do
+  before { |record| Rails.logger.info("Started processing: #{record.id}") }
+  after { |record| Rails.logger.info("Finished processing: #{record.id}") }
+end
+```
+### Attributes
+Attributes are processed using processors (an object which responds to the `call` method). The processor can be defined either as a block or with the `:using` option passed to the `attribute` method.
+```ruby
+require 'securerandom'
+
+class CachedNick
+  def initialize
+    @cache = Hash.new { |hash, nick| hash[nick] = SecureRandom.uuid }
+  end
+
+  def call(nick, _record)
+    @cache[nick]
+  end
+end
+
+schema model: User do
+  attribute(:email) { |email, record| "#{record.id}-#{email}" }
+  attribute(:nickname, using: CachedNick.new)
+end
+```
 
 ## Development
 
