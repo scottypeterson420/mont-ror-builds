@@ -6,7 +6,7 @@ module Remont
     attr_accessor :process_timestamp_attribute
 
     # @return [String]
-    attr_accessor :script_path
+    attr_reader :script_path
 
     def initialize
       @process_timestamp_attribute = :processed_at
