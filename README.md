@@ -50,9 +50,12 @@ schema model: Order do
   attribute(:billing_address) { '23 Wall Street, NY' }
 end
 ```
-- and run `bundle exec rake remont['db/remont.rb']`
+- and run `remont` rake task with the path to the processing script
+```bash
+bundle exec rake "remont[db/anonymize.rb]"
+```
 
-If you don't pass the script path to the rake task, the default path will be `db/remont.rb`. 
+Passing the script path to the rake task is mandatory.
 Running the rake task would result in updating `email` (and `anonymized_at`) column for each row in the `users` table, and `billing_address` column for each row in the `orders` table.
 
 ### Schema
