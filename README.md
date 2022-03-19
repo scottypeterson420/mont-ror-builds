@@ -27,7 +27,7 @@ end
 
 | Option                        | Default value    | Description                                |
 | ---                           | :---:            | ---                                        |
-| `process_timestamp_attribute` | `:processed_at`  | processing status attribute identifier     |
+| `process_timestamp_attribute` | `nil`            | processing status attribute identifier     |
 | `script_path`                 | `'db/remont.rb'` | entry point for the schema processing task |
 
 On successful record processing, `process_timestamp_attribute` on the record will be set to the current processing time (`Time.now.getlocal`).

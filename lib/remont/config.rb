@@ -9,7 +9,7 @@ module Remont
     attr_accessor :script_path
 
     def initialize
-      @process_timestamp_attribute = :processed_at
+      @process_timestamp_attribute = nil
       @script_path = DEFAULT_SCRIPT_PATH
     end
   end

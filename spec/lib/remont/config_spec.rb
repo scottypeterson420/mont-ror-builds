@@ -3,7 +3,7 @@ RSpec.describe Remont::Config do
     let(:config) { described_class.new }
 
     it 'initializes default process timestamp attribute' do
-      expect(config.process_timestamp_attribute).to eq(:processed_at)
+      expect(config.process_timestamp_attribute).to be_nil
     end
 
     it 'initializes default script path' do
