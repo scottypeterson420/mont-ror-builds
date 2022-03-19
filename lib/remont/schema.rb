@@ -1,5 +1,7 @@
 module Remont
   class Schema
+    MISSING_PROCESSING_STATUS_ATTR = "Processing status attribute isn't configured".freeze
+
     # @return [Array<Remont::Attribute>]
     attr_reader :attributes
 
@@ -25,6 +27,8 @@ module Remont
 
     # @return [Remont::Schema]
     def without_processed
+      raise MISSING_PROCESSING_STATUS_ATTR if @process_timestamp_attribute.nil?
+
       @without_processed_scope = proc { |scope| scope.where(process_timestamp_attribute => nil) }
 
       self

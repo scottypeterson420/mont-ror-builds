@@ -10,7 +10,6 @@ RSpec.describe Remont::Script do
       end
     SCRIPT
 
-    bob.reload
-    expect(bob.email).to eq('--')
+    expect(bob.reload.email).to eq('--')
   end
 end

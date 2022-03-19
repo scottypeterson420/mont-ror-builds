@@ -1,5 +1,5 @@
 desc 'Run schema processing'
-task remont: :remonte_env do
+task remont: :remont_env do
   path = Rails.root.join(Remont.config.script_path)
   Remont::Script.new(path).run!
 end

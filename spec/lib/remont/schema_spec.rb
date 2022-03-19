@@ -15,10 +15,10 @@ RSpec.describe Remont::Schema do
     expect(bob.processed_at).to be_within(1).of(now)
   end
 
-  context 'when default process timestamp attribute is overriden' do
+  context 'when default process status attribute is overriden' do
     let!(:bob) { User.create(email: 'bob@example.com', role: 'admin', processed_at: nil) }
 
-    it 'uses new process timestamp attribute from schema arguments' do
+    it 'uses new process status attribute from schema arguments' do
       schema = described_class.new(model: User, process_timestamp_attribute: :processed_at) do
         attribute(:email) { 'email' }
       end
@@ -31,7 +31,7 @@ RSpec.describe Remont::Schema do
       expect(bob.reload.processed_at).to be_within(1).of(now)
     end
 
-    it 'uses new process timestamp attribute from schema definition' do
+    it 'uses new process status attribute from schema definition' do
       schema = described_class.new(model: User) do
         with_process_timestamp_attribute :processed_at
         attribute(:email) { 'email' }
@@ -104,6 +104,14 @@ RSpec.describe Remont::Schema do
       bob.reload
       expect(bob.reload.processed_at).to be_within(1).of(last_processing_at)
       expect(alice.reload.processed_at).not_to be_nil
+    end
+
+    it "fails if process status attribute isn't configured" do
+      expect do
+        described_class.new(model: User, process_timestamp_attribute: nil) do
+          without_processed
+        end
+      end.to raise_error(Remont::Schema::MISSING_PROCESSING_STATUS_ATTR)
     end
   end
 
