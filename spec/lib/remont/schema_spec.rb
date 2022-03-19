@@ -15,6 +15,37 @@ RSpec.describe Remont::Schema do
     expect(bob.processed_at).to be_within(1).of(now)
   end
 
+  context 'when default process timestamp attribute is overriden' do
+    let!(:bob) { User.create(email: 'bob@example.com', role: 'admin', anonymized_at: nil) }
+
+    it 'uses new process timestamp attribute from schema arguments' do
+      schema = described_class.new(model: User, process_timestamp_attribute: :anonymized_at) do
+        attribute(:email) { 'email' }
+      end
+
+      now = Time.now.getlocal
+      Timecop.freeze(now) do
+        schema.process!
+      end
+
+      expect(bob.reload.anonymized_at).to be_within(1).of(now)
+    end
+
+    it 'uses new process timestamp attribute from schema definition' do
+      schema = described_class.new(model: User) do
+        with_process_timestamp_attribute :anonymized_at
+        attribute(:email) { 'email' }
+      end
+
+      now = Time.now.getlocal
+      Timecop.freeze(now) do
+        schema.process!
+      end
+
+      expect(bob.reload.anonymized_at).to be_within(1).of(now)
+    end
+  end
+
   context 'without scope applied' do
     let(:schema) do
       described_class.new(model: User) do

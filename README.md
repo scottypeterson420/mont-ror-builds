@@ -77,6 +77,16 @@ schema model: Order do
   scope { |scope| scope.where(status: :active) }
 end
 ```
+### Configuring the processing time attribute
+When `process_timestamp_attribute` is declared, the processing end time will be recorded for each processed record. Attribute can be configured globally (for all schema's), or individually per schema.
+```ruby
+schema model: User, process_timestamp_attribute: :anonymized_at do
+end
+
+schema model: Order do
+  with_process_timestamp_attribute :anonymized_at
+end
+```
 ### Skipping the processed records
 In some cases, it's desirable to skip already processed records. You can opt-in to this behavior by declaring `without_processed` within the `schema` block. When declared, the processing dataset query will be extended with a condition that excludes already processed records (ie. `where(Remont.process_timestamp_attribute => nil)`)
 ```ruby
