@@ -5,9 +5,5 @@ RSpec.describe Remont::Config do
     it 'initializes default process timestamp attribute' do
       expect(config.process_timestamp_attribute).to eq(:processed_at)
     end
-
-    it 'initializes default script path' do
-      expect(config.script_path).to eq(Remont::Config::DEFAULT_SCRIPT_PATH)
-    end
   end
 end

@@ -21,14 +21,12 @@ Add `config/initializers/remont.rb`
 ```ruby
 Remont.setup do |config|
   config.process_timestamp_attribute = :processed_at
-  config.script_path = 'db/remont.rb'
 end
 ```
 
 | Option                        | Default value    | Description                                |
 | ---                           | :---:            | ---                                        |
 | `process_timestamp_attribute` | `:processed_at`  | processing status attribute identifier     |
-| `script_path`                 | `'db/remont.rb'` | entry point for the schema processing task |
 
 On successful record processing, `process_timestamp_attribute` on the record will be set to the current processing time (`Time.now.getlocal`).
 
@@ -38,11 +36,10 @@ In the following example, the intention is to simulate anonymization of the `use
 ```ruby
 # config/initializers/remont.rb
 Remont.setup do |config|
-  config.process_timestamp_attribute = :anonyzmied_at
-  config.script_path = 'db/anonymize.rb'
+  config.process_timestamp_attribute = :anonymized_at
 end
 ```
-- define processing script
+- define the processing script
 ```ruby
 # db/anonymize.rb
 schema model: User  do
@@ -53,8 +50,12 @@ schema model: Order do
   attribute(:billing_address) { '23 Wall Street, NY' }
 end
 ```
-- and run `bundle exec rake remont`
+- and run `remont` rake task with the path to the processing script
+```bash
+bundle exec rake "remont[db/anonymize.rb]"
+```
 
+Passing the script path to the rake task is mandatory.
 Running the rake task would result in updating `email` (and `anonymized_at`) column for each row in the `users` table, and `billing_address` column for each row in the `orders` table.
 
 ### Schema
