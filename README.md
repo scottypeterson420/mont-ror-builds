@@ -24,9 +24,9 @@ Remont.setup do |config|
 end
 ```
 
-| Option                        | Default value    | Description                                |
-| ---                           | :---:            | ---                                        |
-| `process_timestamp_attribute` | `:processed_at`  | processing status attribute identifier     |
+| Option                        | Default value    | Description                            |
+| ---                           | :---:            | ---                                    |
+| `process_timestamp_attribute` | `nil`            | processing status attribute identifier |
 
 On successful record processing, `process_timestamp_attribute` on the record will be set to the current processing time (`Time.now.getlocal`).
 
@@ -78,14 +78,29 @@ schema model: Order do
   scope { |scope| scope.where(status: :active) }
 end
 ```
+### Recording the processing end time
+Library supports an option to store the processing end time of a record. Enable the behavior by configuring a processing status attribute identifier for the schema. Configure the attribute identifier
+- globally (`Remont::Config#process_timestamp_attribute`, for all schemas)
+- or individually per schema (in the schema DSL, overrides the global setting)
+```ruby
+schema model: User, process_timestamp_attribute: :anonymized_at do
+end
+
+schema model: Order do
+  with_process_timestamp_attribute :anonymized_at
+end
+```
+
+Set process status attribute to `nil` to disable the behavior.
 ### Skipping the processed records
-In some cases, it's desirable to skip already processed records. You can opt-in to this behavior by declaring `without_processed` within the `schema` block. When declared, the processing dataset query will be extended with a condition that excludes already processed records (ie. `where(Remont.process_timestamp_attribute => nil)`)
+In some cases, it's desirable to skip already processed records. You can enable this behavior by declaring `without_processed` within the `schema` block. When declared, the processing dataset query will be extended with a condition that excludes already processed records.
 ```ruby
 schema model: User do
   without_processed
   # ...
 end
 ```
+Configure processing status attribute before declaring the `without_processed`. An error will be raised otherwise.
 ### Callbacks
 Custom pre-processing or post-processing behavior can be declared using `before` and `after` callbacks.
 ```ruby

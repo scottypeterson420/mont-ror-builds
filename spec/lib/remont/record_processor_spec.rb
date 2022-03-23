@@ -1,13 +1,15 @@
 RSpec.describe Remont::RecordProcessor do
   subject(:processor) do
-    described_class.new(
-      [Remont::Attribute.new(:email) { 'email' },
-       Remont::Attribute.new(:role) { 'role' }],
-      callback,
-      callback
-    )
+    described_class.new(schema, callback, callback)
   end
 
+  let(:schema) do
+    Remont::Schema.new(model: User) do
+      with_process_timestamp_attribute :anonymized_at
+      attribute(:email) { 'email' }
+      attribute(:role) { 'role' }
+    end
+  end
   let(:callback) { instance_double('Proc', call: nil) }
   let(:record) do
     instance_double('User', email: 'bob@example.com', role: 'admin', update_columns: nil)
@@ -20,7 +22,7 @@ RSpec.describe Remont::RecordProcessor do
     end
 
     expect(record).to have_received(:update_columns).with(
-      email: 'email', role: 'role', processed_at: now
+      email: 'email', role: 'role', anonymized_at: now
     )
   end
 

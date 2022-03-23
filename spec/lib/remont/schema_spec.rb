@@ -1,7 +1,7 @@
 RSpec.describe Remont::Schema do
   it 'processes each matching record' do # rubocop:disable RSpec/ExampleLength
     bob = User.create(email: 'bob@example.com', role: 'admin', processed_at: nil)
-    schema = described_class.new(model: User) do
+    schema = described_class.new(model: User, process_timestamp_attribute: :processed_at) do
       attribute(:email) { 'email' }
     end
 
@@ -15,9 +15,40 @@ RSpec.describe Remont::Schema do
     expect(bob.processed_at).to be_within(1).of(now)
   end
 
+  context 'when default process status attribute is overriden' do
+    let!(:bob) { User.create(email: 'bob@example.com', role: 'admin', processed_at: nil) }
+
+    it 'uses new process status attribute from schema arguments' do
+      schema = described_class.new(model: User, process_timestamp_attribute: :processed_at) do
+        attribute(:email) { 'email' }
+      end
+
+      now = Time.now.getlocal
+      Timecop.freeze(now) do
+        schema.process!
+      end
+
+      expect(bob.reload.processed_at).to be_within(1).of(now)
+    end
+
+    it 'uses new process status attribute from schema definition' do
+      schema = described_class.new(model: User) do
+        with_process_timestamp_attribute :processed_at
+        attribute(:email) { 'email' }
+      end
+
+      now = Time.now.getlocal
+      Timecop.freeze(now) do
+        schema.process!
+      end
+
+      expect(bob.reload.processed_at).to be_within(1).of(now)
+    end
+  end
+
   context 'without scope applied' do
     let(:schema) do
-      described_class.new(model: User) do
+      described_class.new(model: User, process_timestamp_attribute: :processed_at) do
         attribute(:email) { 'email' }
       end
     end
@@ -37,7 +68,8 @@ RSpec.describe Remont::Schema do
     let(:schema) do
       described_class.new(
         model: User,
-        scope: proc { |relation| relation.where(role: 'customer') }
+        scope: proc { |relation| relation.where(role: 'customer') },
+        process_timestamp_attribute: :processed_at
       ) do
         attribute(:email) { 'email' }
       end
@@ -56,7 +88,7 @@ RSpec.describe Remont::Schema do
 
   context 'when skip process scope is enabled' do
     let(:schema) do
-      described_class.new(model: User) do
+      described_class.new(model: User, process_timestamp_attribute: :processed_at) do
         without_processed
         attribute(:email) { 'email' }
       end
@@ -73,6 +105,14 @@ RSpec.describe Remont::Schema do
       expect(bob.reload.processed_at).to be_within(1).of(last_processing_at)
       expect(alice.reload.processed_at).not_to be_nil
     end
+
+    it "fails if process status attribute isn't configured" do
+      expect do
+        described_class.new(model: User, process_timestamp_attribute: nil) do
+          without_processed
+        end
+      end.to raise_error(Remont::Schema::MISSING_PROCESSING_STATUS_ATTR)
+    end
   end
 
   context 'with before callback specified' do
@@ -81,7 +121,7 @@ RSpec.describe Remont::Schema do
     let(:schema) do
       cb = callback
 
-      described_class.new(model: User) do
+      described_class.new(model: User, process_timestamp_attribute: :processed_at) do
         without_processed
         attribute(:email) { 'email' }
         before { |*args| cb.call(*args) }
@@ -105,7 +145,7 @@ RSpec.describe Remont::Schema do
     let(:schema) do
       cb = callback
 
-      described_class.new(model: User) do
+      described_class.new(model: User, process_timestamp_attribute: :processed_at) do
         without_processed
         attribute(:email) { 'email' }
         after { |*args| cb.call(*args) }

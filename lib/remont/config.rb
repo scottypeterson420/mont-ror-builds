@@ -4,7 +4,7 @@ module Remont
     attr_accessor :process_timestamp_attribute
 
     def initialize
-      @process_timestamp_attribute = :processed_at
+      @process_timestamp_attribute = nil
     end
   end
 end
