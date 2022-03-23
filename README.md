@@ -79,7 +79,7 @@ end
 ```
 ### Recording the processing end time
 Library supports an option to store the processing end time of a record. Enable the behavior by configuring a processing status attribute identifier for the schema. Configure the attribute identifier
-- globally (`Remont::Config#process_timestamp_attribute`, for all schema's)
+- globally (`Remont::Config#process_timestamp_attribute`, for all schemas)
 - or individually per schema (in the schema DSL, overrides the global setting)
 ```ruby
 schema model: User, process_timestamp_attribute: :anonymized_at do
@@ -90,7 +90,7 @@ schema model: Order do
 end
 ```
 
-Set process status attribute to `nil` to disable the behavior. `nil`.
+Set process status attribute to `nil` to disable the behavior.
 ### Skipping the processed records
 In some cases, it's desirable to skip already processed records. You can enable this behavior by declaring `without_processed` within the `schema` block. When declared, the processing dataset query will be extended with a condition that excludes already processed records.
 ```ruby
